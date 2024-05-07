@@ -3,12 +3,18 @@
 YAD_WCONFIG='--title=GFinder --width=480 --center --window-icon=find'
 YAD_FIELD_SEPARATOR="<tt><span foreground='#888' size='large'>────────────────────────────────────────</span></tt>"
 
-DIR_SEARCH="$HOME"
+if [[ -z $1 ]]; then
+	DIR_SEARCH="$HOME"
+else
+	DIR_SEARCH="$(pwd $1)"
+fi
+
 FILE_REGEX=""
 IGNORE_CASE="TRUE"
 
 LOG_FILE='/tmp/gfinder_%date%.log'
 OPEN_COMMAND="xdg-open"
+
 GREP_REGEX_FLAG="-G"
 
 _parse_path() {
