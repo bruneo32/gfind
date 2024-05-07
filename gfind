@@ -1,0 +1,76 @@
+#!/bin/bash
+
+YAD_WCONFIG='--title=GFinder --width=480 --center --window-icon=find'
+YAD_FIELD_SEPARATOR="<tt><span foreground='#888' size='large'>────────────────────────────────────────</span></tt>"
+
+DIR_SEARCH="$HOME"
+FILE_REGEX=""
+IGNORE_CASE="TRUE"
+
+LOG_FILE='/tmp/gfinder_%date%.log'
+OPEN_COMMAND="xdg-open"
+GREP_REGEX_FLAG="-G"
+
+_parse_path() {
+	echo $1 |sed "s/%date%/$DATE/"
+}
+
+echo_ifeq() {
+	[[ $1 == $2 ]] && echo $3
+}
+
+while true; do
+	yad_res=$(yad $YAD_WCONFIG \
+		--button="Quit:99" --button="Config:1" --button="Search:0" \
+		--image="find" --form --separator="," --item-separator="|" --focus-field=2 \
+		--field="Searching directory":CDIR \
+		--field="Filename" \
+		--field="$YAD_FIELD_SEPARATOR":LBL \
+		--field="Ignore case":CHK \
+		--field="Regex Level":CB \
+		"$DIR_SEARCH" "$FILE_REGEX" "" "$IGNORE_CASE" \
+		"$(echo_ifeq $GREP_REGEX_FLAG '-G' '^')Basic|$(echo_ifeq $GREP_REGEX_FLAG '-E' '^')Enhanced|$(echo_ifeq $GREP_REGEX_FLAG '-P' '^')Perl (PCREs)|$(echo_ifeq $GREP_REGEX_FLAG '-F' '^')No regex")
+	yad_btn=$?
+
+	if [[ $yad_btn == 1 ]]; then
+		yad $YAD_WCONFIG
+		continue
+	elif [[ -z $yad_res || $yad_btn == 99 ]]; then
+		exit 1
+	fi
+
+	DIR_SEARCH=$(echo $yad_res |awk -F',' '{print $1}')
+	FILE_REGEX=$(echo $yad_res |awk -F',' '{print $2}')
+	IGNORE_CASE=$(echo $yad_res |awk -F',' '{print $4}')
+	REGEX_LEVEL=$(echo $yad_res |awk -F',' '{print $5}')
+
+	GREP_REGEX_FLAG="-G"
+	case $REGEX_LEVEL in
+		"Enhanced" | \
+		'^Enhanced')
+			GREP_REGEX_FLAG="-E"
+			;;
+		"Perl (PCREs)" | \
+		'^Perl (PCREs)')
+			GREP_REGEX_FLAG="-P"
+			;;
+		"No regex" | \
+		'^No regex')
+			GREP_REGEX_FLAG="-F"
+			;;
+	esac
+
+	DATE=$(date +%s)
+	CURRENT_LOG=$(_parse_path $LOG_FILE)
+
+	{
+    	{ find "$DIR_SEARCH" |grep --color=never $GREP_REGEX_FLAG $(echo_ifeq $IGNORE_CASE "TRUE" "-i") "$FILE_REGEX"; } 2>&1 |tee $CURRENT_LOG
+	} | yad $YAD_WCONFIG --image="find" --height=300 --autokill \
+		--list --column=Files --tail --no-header --grid-lines=hor --regex-search --separator=" " --dclick-action="$OPEN_COMMAND" \
+		--button="Quit:99" --button="Open Log:1" --button="Back:0"
+	yad_btn=$?
+
+	if   [[ $yad_btn == 99 ]]; then exit 0
+	elif [[ $yad_btn == 2 ]];  then $OPEN_COMMAND $CURRENT_LOG
+	fi
+done
