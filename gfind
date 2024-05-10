@@ -1,8 +1,8 @@
 #!/bin/bash
 
+## Preprocess
 HELP_FILE="HELP"
 
-# Preprocess
 if [[ $1 == "-h" || $1 == "--help" ]]; then
 	cat $HELP_FILE
 	exit 0
@@ -11,21 +11,28 @@ elif [[ $1 == "-v" || $1 == "--version" ]]; then
 	exit 0
 fi
 
-YAD_WCONFIG='--title=GFinder --width=480 --center --window-icon=find'
-YAD_FIELD_SEPARATOR="<tt><span foreground='#888' size='large'>────────────────────────────────────────</span></tt>"
-
-if [[ -z $1 ]]; then
-	DIR_SEARCH="$HOME"
+## Parse config file
+CONFIG_FILE="$HOME/.config/gfind/gfind.config"
+DEFAULT_CONFIG_FILE="/usr/local/share/gfind/default.config"
+if [[ -f $CONFIG_FILE ]]; then
+	source $CONFIG_FILE
 else
-	DIR_SEARCH="$(pwd $1)"
+	mkdir -p $(readlink -f $(dirname $CONFIG_FILE))
+	cp $DEFAULT_CONFIG_FILE $CONFIG_FILE
 fi
 
-FILE_REGEX=""
-IGNORE_CASE="TRUE"
+if [[ -s $1 ]]; then
+	DIR_SEARCH="$(pwd $1)"
+elif [[ -z ${DIR_SEARCH+x} ]]; then
+	DIR_SEARCH="$HOME"
+fi
 
-LOG_FILE='/tmp/gfinder_%date%.log'
-OPEN_COMMAND="xdg-open"
+if [[ -z ${FILE_REGEX+x} ]];   then FILE_REGEX=""; fi
+if [[ -z ${IGNORE_CASE+x} ]];  then IGNORE_CASE="TRUE"; fi
+if [[ -z ${OPEN_COMMAND+x} ]]; then OPEN_COMMAND="xdg-open"; fi
+if [[ -z ${LOG_FILE+x} ]];     then LOG_FILE='/tmp/gfinder_%date%.log'; fi
 
+## Variables and functions
 GREP_REGEX_FLAG="-G"
 
 _parse_path() {
@@ -35,6 +42,10 @@ _parse_path() {
 echo_ifeq() {
 	[[ $1 == $2 ]] && echo $3
 }
+
+# YAD PROGRAM CONFIG
+YAD_WCONFIG='--title=GFinder --width=480 --center --window-icon=find'
+YAD_FIELD_SEPARATOR="<tt><span foreground='#888' size='large'>────────────────────────────────────────</span></tt>"
 
 while true; do
 	yad_res=$(yad $YAD_WCONFIG --image="find" \
