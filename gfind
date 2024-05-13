@@ -61,7 +61,14 @@ while true; do
 	yad_btn=$?
 
 	if [[ $yad_btn == 1 ]]; then
-		yad $YAD_WCONFIG
+		$OPEN_COMMAND $CONFIG_FILE
+
+		# If OPEN_COMMAND is not installed, open for everyone
+		if [[ $? != 0 ]]; then open $CONFIG_FILE; fi
+		if [[ $? != 0 ]]; then echo -e "Error: Could not execute 'open \$CONFIG_FILE'\nPlease use your favorite editor to set OPEN_COMMAND in $CONFIG_FILE" &1>&2; exit 127; fi
+
+		# Re-source variables
+		source $CONFIG_FILE
 		continue
 	elif [[ -z $yad_res || $yad_btn == 99 ]]; then
 		exit 0
