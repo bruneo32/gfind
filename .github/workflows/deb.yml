@@ -40,5 +40,5 @@ jobs:
       - name: Upload deb as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $DPKG_NAME
-          path: $DPKG_NAME
+          name: ${{env.DPKG_NAME}}
+          path: ${{env.DPKG_NAME}}
