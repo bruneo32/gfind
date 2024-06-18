@@ -32,11 +32,10 @@ jobs:
 
       - name: Create deb package
         run: |
-          export DPKG_NAME="${DPKG}_all.deb"
-          dpkg-deb -Zxz --root-owner-group --build $DPKG --output $DPKG_NAME
+          dpkg-deb -Zxz --build $DPKG --root-owner-group
 
       - name: Upload deb as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $DPKG_NAME
-          path: $DPKG_NAME
+          name: $DPKG.deb
+          path: $DPKG.deb
