@@ -2,7 +2,6 @@ name: Create debian package
 
 env:
   versionName: ${{github.sha}}-${{github.run_number}}
-  pkgName: ${{github.event.repository.name}}_${versionName}_all.deb
 
 on:
   push:
@@ -16,4 +15,5 @@ jobs:
     steps:
       - name: Test
         run: |
+          export pkgName="${{github.event.repository.name}}_${{env.versionName}}_all.deb"
           echo "Hello: $pkgName"
