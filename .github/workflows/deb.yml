@@ -1,0 +1,15 @@
+name: Create debian package
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Test
+        run: |
+          echo "Hello: ${github.event.repository.name}"
