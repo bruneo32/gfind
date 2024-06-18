@@ -1,5 +1,9 @@
 name: Create debian package
 
+env:
+  versionName: ${{github.sha}}-${{github.run_number}}
+  pkgName: ${{github.event.repository.name}}_${versionName}_all.deb
+
 on:
   push:
     branches:
@@ -12,4 +16,4 @@ jobs:
     steps:
       - name: Test
         run: |
-          echo "Hello: ${{github.event.repository.name}}"
+          echo "Hello: $pkgName"
