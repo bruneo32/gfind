@@ -1,0 +1,9 @@
+Package: gfind
+Version: 0.1-1
+Architecture: all
+Maintainer: Bruno Castro <bruneo32b@gmail.com>
+Depends: yad, find, grep
+Section: devel
+Priority: optional
+Homepage: https://github.com/bruneo32/gfind
+Description: graphical frontend for find(1) + grep(1) commands.

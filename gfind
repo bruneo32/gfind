@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ## Preprocess
-HELP_FILE="HELP"
+HELP_FILE="/usr/local/share/gfind/HELP"
 
 if [[ $1 == "-h" || $1 == "--help" ]]; then
 	cat $HELP_FILE
