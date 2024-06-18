@@ -34,7 +34,7 @@ jobs:
       - name: Create deb package
         run: |
           dpkg-deb -Zxz --root-owner-group --build $DPKG $DPKG_NAME
-          echo "DPKG_NAME=$(dpkg-name -o $DPKG_NAME)" >> $GITHUB_ENV
+          echo "DPKG_NAME=$(dpkg-name -o $DPKG_NAME |awk -F' ' '{print $6}')" >> $GITHUB_ENV
 
       - name: Upload deb as artifact
         uses: actions/upload-artifact@v3
