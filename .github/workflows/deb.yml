@@ -1,5 +1,8 @@
 name: Create debian package
 
+env:
+  versionName: ${{github.sha}}-${{github.run_number}}
+
 on:
   push:
     branches:
@@ -10,6 +13,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Test
+      - uses: actions/checkout@v3
+
+      - name: Create package structure
         run: |
-          echo "Hello: ${github.event.repository.name}"
+          export DPKG="${{github.event.repository.name}}_${{env.versionName}}"
+          mkdir $DPKG
+          cd $DPKG
+          mkdir -p DEBIAN usr/local/bin usr/local/share/gfind
+
+      - name: Copy stuff inside
+        run: |
+          cp deb_control $DPKG/DEBIAN/control
+          cp gfind $DPKG/usr/local/bin/gfind
+          chmod +x $DPKG/usr/local/bin/*
+          cp -r share/* $DPKG/usr/local/share/gfind/
+          cp LICENSE $DPKG/usr/local/share/gfind/
+          cp README.md $DPKG/usr/local/share/gfind/
+
+      - name: Create deb package
+        run: |
+          export DPKG_NAME="${DPKG}_all.deb"
+          dpkg-deb -Zxz --root-owner-group --build $DPKG --output $DPKG_NAME
+
+      - name: Upload deb as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: $DPKG_NAME
+          path: $DPKG_NAME
