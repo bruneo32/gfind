@@ -2,6 +2,7 @@ name: Create debian package
 
 env:
   DPKG: ${{github.event.repository.name}}_${{github.sha}}-${{github.run_number}}
+  DPKG_NAME: "${{github.event.repository.name}}.deb"
 
 on:
   push:
@@ -32,10 +33,11 @@ jobs:
 
       - name: Create deb package
         run: |
-          dpkg-deb -Zxz --build $DPKG --root-owner-group
+          dpkg-deb -Zxz --root-owner-group --build $DPKG $DPKG_NAME
+          echo "DPKG_NAME=$(dpkg-name -o $DPKG_NAME)" >> $GITHUB_ENV
 
       - name: Upload deb as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $DPKG.deb
-          path: $DPKG.deb
+          name: $DPKG_NAME
+          path: $DPKG_NAME
