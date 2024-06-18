@@ -1,7 +1,7 @@
 name: Create debian package
 
 env:
-  versionName: ${{github.sha}}-${{github.run_number}}
+  DPKG: ${{github.event.repository.name}}_${{github.sha}}-${{github.run_number}}
 
 on:
   push:
@@ -17,7 +17,6 @@ jobs:
 
       - name: Create package structure
         run: |
-          export DPKG="${{github.event.repository.name}}_${{env.versionName}}"
           mkdir $DPKG
           cd $DPKG
           mkdir -p DEBIAN usr/local/bin usr/local/share/gfind
