@@ -1,7 +1,8 @@
 name: Create debian package
 
 env:
-  versionName: ${{github.sha}}-${{github.run_number}}
+  DPKG: ${{github.event.repository.name}}_${{github.sha}}-${{github.run_number}}
+  DPKG_NAME: "${{github.event.repository.name}}.deb"
 
 on:
   push:
@@ -17,7 +18,6 @@ jobs:
 
       - name: Create package structure
         run: |
-          export DPKG="${{github.event.repository.name}}_${{env.versionName}}"
           mkdir $DPKG
           cd $DPKG
           mkdir -p DEBIAN usr/local/bin usr/local/share/gfind
@@ -33,11 +33,12 @@ jobs:
 
       - name: Create deb package
         run: |
-          export DPKG_NAME="${DPKG}_all.deb"
-          dpkg-deb -Zxz --root-owner-group --build $DPKG --output $DPKG_NAME
+          dpkg-deb -Zxz --root-owner-group --build $DPKG $DPKG_NAME
+          # Update DPKG_NAME using dpkg-name command
+          echo "DPKG_NAME=$(dpkg-name -o $DPKG_NAME |awk -F' ' '{print $6}' |xargs echo |cut -d'/' -f2-)" >> $GITHUB_ENV
 
       - name: Upload deb as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: $DPKG_NAME
-          path: $DPKG_NAME
+          name: ${{env.DPKG_NAME}}
+          path: ${{env.DPKG_NAME}}

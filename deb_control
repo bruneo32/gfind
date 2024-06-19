@@ -2,7 +2,7 @@ Package: gfind
 Version: 0.1-1
 Architecture: all
 Maintainer: Bruno Castro <bruneo32b@gmail.com>
-Depends: yad, find, grep
+Depends: yad
 Section: devel
 Priority: optional
 Homepage: https://github.com/bruneo32/gfind
