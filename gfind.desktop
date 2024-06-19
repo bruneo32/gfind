@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=GFind
+GenericName=GFind quick file finder
+X-GNOME-FullName=GFind
+Comment=Search and find files quickly in whole filesystem
+Exec=/usr/local/bin/gfind %f
+Icon=find
+Terminal=false
+Type=Application
+Categories=GNOME;System;Filesystem;
+Keywords=Find;Search;File;Files;Speed;Filesystem;
+StartupNotify=false

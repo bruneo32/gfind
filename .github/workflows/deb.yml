@@ -20,16 +20,17 @@ jobs:
         run: |
           mkdir $DPKG
           cd $DPKG
-          mkdir -p DEBIAN usr/local/bin usr/local/share/gfind
+          mkdir -p DEBIAN usr/local/bin usr/local/share/gfind usr/local/share/applications
 
       - name: Copy stuff inside
         run: |
           cp deb_control $DPKG/DEBIAN/control
-          cp gfind $DPKG/usr/local/bin/gfind
+          cp gfind $DPKG/usr/local/bin/
           chmod +x $DPKG/usr/local/bin/*
           cp -r share/* $DPKG/usr/local/share/gfind/
           cp LICENSE $DPKG/usr/local/share/gfind/
           cp README.md $DPKG/usr/local/share/gfind/
+          cp gfind.desktop $DPKG/usr/local/share/applications/
 
       - name: Create deb package
         run: |
