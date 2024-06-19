@@ -21,6 +21,7 @@ else
 	cp $DEFAULT_CONFIG_FILE $CONFIG_FILE
 fi
 
+# Set default values if variables does not exist (${var+x} means variable is unset)
 if [[ -s $1 ]]; then
 	DIR_SEARCH="$(pwd $1)"
 elif [[ -z ${DIR_SEARCH+x} ]]; then
