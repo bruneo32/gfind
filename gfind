@@ -45,7 +45,7 @@ echo_ifeq() {
 }
 
 # YAD PROGRAM CONFIG
-YAD_WCONFIG='--title=GFinder --width=480 --center --window-icon=find'
+YAD_WCONFIG='--title=GFind --width=480 --center --window-icon=find'
 YAD_FIELD_SEPARATOR="<tt><span foreground='#888' size='large'>────────────────────────────────────────</span></tt>"
 
 while true; do
